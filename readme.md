@@ -4,6 +4,8 @@
 
 The purpose of this project is to provide a RESTful API for a to-do list application. This API allows users to manage their to-do tasks by providing functionalities to add, retrieve, update, and delete tasks. The API is built using Flask and the data is stored in a MySQL database.
 
+![Todo list app home](img/home.png)
+
 ## Tech Stack
 
 - **Flask**: Flask is a lightweight WSGI web application framework. It is designed to make getting started quick and easy, with the ability to scale up to complex applications.
