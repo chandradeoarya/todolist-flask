@@ -28,3 +28,55 @@ This project can serve as a backend for any frontend service that needs to-do li
 
 Also, change api endpoint in html file.
 
+# Running the To-Do List API with Docker
+
+The project uses Docker to create a containerized version of the application, providing an easy way to ensure that the application runs in the same way across different platforms.
+
+## Docker Prerequisites
+
+- Install Docker Desktop on your local machine. Installation instructions can be found on the Docker's [official site](https://www.docker.com/products/docker-desktop).
+- Verify the Docker installation by running `docker --version` in the command line.
+
+## Steps to Build and Run the Docker Container
+
+1. Navigate to the root folder of the project where the Dockerfile is located.
+
+2. Build the Docker image by running the following command:
+
+   ```bash
+   docker build -t todo-api:latest .
+   ```
+   This command builds a Docker image from the Dockerfile and tags it as "todo-api:latest". The `-t` option is used to name and optionally tag the image in the 'name:tag' format. The `.` at the end of the command is the context, which points to the current directory.
+
+3. After the Docker image has been built, you can run the Docker container with the following command:
+
+   ```bash
+   docker run -p 80:80 todo-api:latest
+   ```
+   The `-p` option is used to map the port from the Docker container to your host machine. In this case, the application inside the Docker container which is running on port 80 is accessible via port 80 on your host machine.
+
+Your Dockerized application should now be running at http://localhost.
+
+## Troubleshooting Docker
+
+- To view the running Docker containers, use the command:
+
+  ```bash
+  docker ps
+  ```
+
+- If you want to stop a running Docker container, use the command:
+
+  ```bash
+  docker stop <container_id>
+  ```
+  Replace `<container_id>` with your actual running docker container id.
+
+- To remove a Docker image, use the command:
+
+  ```bash
+  docker rmi <image_id>
+  ```
+  Replace `<image_id>` with your actual Docker image id.
+
+Please remember to replace `<container_id>` and `<image_id>` with your actual Docker container id and Docker image id.
