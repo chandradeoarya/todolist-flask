@@ -80,3 +80,67 @@ Your Dockerized application should now be running at http://localhost.
   Replace `<image_id>` with your actual Docker image id.
 
 Please remember to replace `<container_id>` and `<image_id>` with your actual Docker container id and Docker image id.
+
+
+# Running the To-Do List API with Docker Compose
+
+The project also includes a Docker Compose file which allows you to manage and run multi-container Docker applications. Docker Compose uses a YAML file (`docker-compose.yml`) to configure the application's services.
+
+## Docker Compose Prerequisites
+
+- Docker Compose is included in Docker Desktop. If you haven't done already, install Docker Desktop on your local machine. Installation instructions can be found on Docker's [official site](https://www.docker.com/products/docker-desktop).
+
+- Verify the Docker Compose installation by running `docker-compose --version` in the command line.
+
+## Steps to Build and Run the Docker Containers with Docker Compose
+
+1. Navigate to the root folder of the project where the `docker-compose.yml` file is located.
+
+2. Start the application by running the following command:
+
+   ```bash
+   docker-compose up -d
+   ```
+   This command pulls the necessary images, builds the services declared in the `docker-compose.yml` file, and starts the services in detached mode (`-d` option).
+
+Your Dockerized application should now be running at http://localhost.
+
+To check the status of your services, run:
+
+   ```bash
+   docker-compose ps
+   ```
+
+## Stopping the Application
+
+To stop the services running in the background, run:
+
+   ```bash
+   docker-compose down
+   ```
+
+## Rebuilding the Application
+
+If you make changes to the application code or Dockerfile and need to rebuild your Docker image, you can use the following command:
+
+   ```bash
+   docker-compose up -d --build
+   ```
+This command will rebuild the image and restart the services.
+
+## Troubleshooting Docker Compose
+
+- To view the logs for your services, you can use the `docker-compose logs` command:
+
+  ```bash
+  docker-compose logs
+  ```
+  
+- To execute commands inside the container, use the `docker-compose exec` command:
+
+  ```bash
+  docker-compose exec <service_name> <command>
+  ```
+  Replace `<service_name>` with your actual service name (like `myapp`) and `<command>` with your actual command.
+
+Note: It's good practice to replace `<service_name>` and `<command>` with your actual service name and the command you want to run inside the Docker container.
