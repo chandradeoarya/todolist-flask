@@ -60,4 +60,4 @@ jobs:
           application_name: ${{ env.APPLICATION_NAME }}
           environment_name: ${{ env.ENVIRONMENT_NAME }}
           version_label: v${{ github.run_number }}
-          package: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
+          deployment_package: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
