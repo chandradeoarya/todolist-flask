@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - gaction-cdeb
+  workflow_dispatch:  # This allows manual triggering of this workflow.
 
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -32,5 +33,6 @@ jobs:
           context: .
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
+
     outputs:
       ci-status: ${{ job.status }}
