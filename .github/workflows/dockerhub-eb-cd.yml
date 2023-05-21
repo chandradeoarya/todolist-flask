@@ -37,5 +37,5 @@ jobs:
           version-label: v${{ github.run_number }}
           package: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
 
-      - name: Output job status
-        run: echo "Job status: ${{ job.status }}"
+    outputs:
+      cd-status: ${{ job.status }}
