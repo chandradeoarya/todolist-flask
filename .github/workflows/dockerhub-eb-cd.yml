@@ -2,13 +2,15 @@ name: AWS Elastic Beanstalk Deployment
 
 on:
   workflow_run:
-    workflows: ["Docker Build and Push"]
+    workflows: ["Build and Push Docker Image"]
     types:
       - completed
 
 env:
-  APPLICATION_NAME: ${{ secrets.APPLICATION_NAME }}
-  ENVIRONMENT_NAME: ${{ secrets.ENVIRONMENT_NAME }}
+  APPLICATION_NAME: "todolist-flask"
+  ENVIRONMENT_NAME: "todolist-flask-docker-env"
+  AWS_REGION: "us-east-1"
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
 jobs:
   deploy:
@@ -23,16 +25,16 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: your-aws-region
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy to AWS Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v19
         with:
-          aws-region: your-aws-region
+          aws-region: ${{ env.AWS_REGION }}
           application-name: ${{ env.APPLICATION_NAME }}
           environment-name: ${{ env.ENVIRONMENT_NAME }}
           version-label: v${{ github.run_number }}
-          package: your-username/your-image:latest
+          package: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
 
       - name: Output job status
         run: echo "Job status: ${{ job.status }}"
