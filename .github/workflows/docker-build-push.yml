@@ -32,3 +32,6 @@ jobs:
           context: .
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
+
+    outputs:
+      ci-status: ${{ job.status }}
