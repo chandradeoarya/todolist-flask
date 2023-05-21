@@ -36,6 +36,3 @@ jobs:
           environment-name: ${{ env.ENVIRONMENT_NAME }}
           version-label: v${{ github.run_number }}
           package: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
-
-    outputs:
-      cd-status: ${{ job.status }}
