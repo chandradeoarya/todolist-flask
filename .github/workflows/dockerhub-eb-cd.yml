@@ -1,4 +1,4 @@
-name: AWS Elastic Beanstalk Deployment
+name: AWS Elastic Beanstalk Deployment using zip
 
 on:
   push:
