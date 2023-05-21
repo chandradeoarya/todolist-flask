@@ -1,4 +1,4 @@
-name: Docker build push and EB Deploy
+name: AWS Elastic Beanstalk Deployment
 
 on:
   push:
@@ -35,8 +35,9 @@ jobs:
           context: .
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
-
+          
   deploy:
+    needs: build_and_push   # This line ensures that this job runs only after 'build_and_push' completes successfully.
     runs-on: ubuntu-latest
 
     steps:
@@ -48,12 +49,12 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: "us-east-1"
 
       - name: Deploy to AWS Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v19
         with:
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: "us-east-1"
           application-name: ${{ env.APPLICATION_NAME }}
           environment-name: ${{ env.ENVIRONMENT_NAME }}
           version-label: v${{ github.run_number }}
