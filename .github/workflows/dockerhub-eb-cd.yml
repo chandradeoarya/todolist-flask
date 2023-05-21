@@ -33,9 +33,10 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: true
+          push: false
           tags: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
-          
+      - name: zip code
+        run: zip -r deploy.zip *
   deploy:
     needs: build_and_push   # This line ensures that this job runs only after 'build_and_push' completes successfully.
     runs-on: ubuntu-latest
@@ -60,4 +61,5 @@ jobs:
           application_name: ${{ env.APPLICATION_NAME }}
           environment_name: ${{ env.ENVIRONMENT_NAME }}
           version_label: v${{ github.run_number }}
-          deployment_package: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
+          deployment_package: deploy.zip
+          # deployment_package: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
