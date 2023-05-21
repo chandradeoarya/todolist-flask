@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - gaction-ci
+      - gaction-cdeb
 
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -32,3 +32,5 @@ jobs:
           context: .
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
+    outputs:
+      ci-status: ${{ job.status }}
