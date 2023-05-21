@@ -1,4 +1,4 @@
-name: AWS Elastic Beanstalk Deployment
+name: Docker build push and EB Deploy
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
           context: .
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/todolist-flask:latest
-          
+
   deploy:
     runs-on: ubuntu-latest
 
