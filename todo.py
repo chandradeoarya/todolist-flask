@@ -3,6 +3,7 @@ import os
 from flask import Flask, jsonify, abort, request, make_response
 from flaskext.mysql import MySQL
 from flask_cors import CORS
+from elasticapm.contrib.flask import ElasticAPM
 
 # Set up logging
 # logging.basicConfig(filename='application.log', level=logging.INFO)
@@ -31,6 +32,24 @@ logger.info('This is a sample log message to test.')
 
 app = Flask(__name__)
 CORS(app)
+
+app.config['ELASTIC_APM'] = {
+# Set the required service name. Allowed characters:
+# a-z, A-Z, 0-9, -, _, and space
+'SERVICE_NAME': 'todolist-flask_apm',
+
+# Use if APM Server requires a secret token
+'SECRET_TOKEN': '',
+
+# Set the custom APM Server URL (default: http://localhost:8200)
+'SERVER_URL': 'http://localhost:8200',
+
+# Set the service environment
+'ENVIRONMENT': 'development',
+}
+
+apm = ElasticAPM(app)
+
 
 # Configuring MySQL database
 app.config['MYSQL_DATABASE_HOST'] = 'todo-database-server'

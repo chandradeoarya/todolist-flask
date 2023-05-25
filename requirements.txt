@@ -2,3 +2,5 @@ flask
 flask-mysql
 cryptography
 flask_cors
+elastic-apm[flask]
+elasticsearch
