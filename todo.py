@@ -1,6 +1,33 @@
+import logging
+import os
 from flask import Flask, jsonify, abort, request, make_response
 from flaskext.mysql import MySQL
 from flask_cors import CORS
+
+# Set up logging
+# logging.basicConfig(filename='application.log', level=logging.INFO)
+
+# Create a formatter that includes a timestamp
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+# Create a logger and configure it with the formatter
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# Specify the directory path and create it if it doesn't exist
+log_directory = 'logs'  # Replace 'logs' with the desired directory name
+os.makedirs(log_directory, exist_ok=True)
+
+# Specify the log file path
+log_file_path = os.path.join(log_directory, 'application.log')
+
+# Create a file handler and add it to the logger
+file_handler = logging.FileHandler(log_file_path, mode='a')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+# Log a sample message
+logger.info('This is a sample log message to test.')
 
 app = Flask(__name__)
 CORS(app)
@@ -36,13 +63,38 @@ def init_todo_db():
     data = """
     INSERT INTO todo_db.todos (title, description, is_done)
     VALUES
-        ("Learning docker", "Finishing all topics", 1 ),
-        ("Ansible topics", "Just forgot. Need to revise again.", 0),
-        ("Work on Belt exam", "Solve all the questions and get black belt", 0);
+        ("Learning Linux and AWS", "Finishing all topics", 1 ),
+        ("Infra and automation", "Just forgot. Need to revise again.", 0),
+        ("CICD", "Learn more", 0);
     """
     cursor.execute(drop_table)
     cursor.execute(todos_table)
     cursor.execute(data)
+
+# Logging helper functions
+def log_request_start():
+    logging.info('Request started: %s %s', request.method, request.url)
+
+def log_request_end():
+    logging.info('Request ended: %s %s', request.method, request.url)
+
+def log_task_operation(operation):
+    logging.info('Task %s: %s', operation, request.json['title'])
+
+def log_request_error(error_code):
+    logging.error('Request error: %s %s', error_code, request.url)
+
+# Flask request hooks
+@app.before_request
+def before_request():
+    log_request_start()
+
+@app.after_request
+def after_request(response):
+    log_request_end()
+    return response
+
+
 
 def get_all_tasks():
     """Function to retrieve all tasks from the database."""
@@ -89,64 +141,97 @@ def remove_task(task):
     row = cursor.fetchone()
     return True if row is None else False
 
+
 # Set up Flask routes for API
 @app.route('/')
 def home():
     """Home route that returns a welcome message."""
-    return "Welcome to to-do API Service"
+    return "Welcome to the to-do API Service"
 
 @app.route('/todos', methods=['GET'])
 def get_tasks():
     """API route to retrieve all tasks."""
-    return jsonify({'tasks':get_all_tasks()})
+    try:
+        tasks = get_all_tasks()
+        return jsonify({'tasks': tasks})
+    except Exception as e:
+        log_request_error(500)
+        return make_response(jsonify({'error': 'Internal server error'}), 500)
 
-@app.route('/todos/<int:task_id>', methods = ['GET'])
+@app.route('/todos/<int:task_id>', methods=['GET'])
 def get_task(task_id):
     """API route to retrieve a specific task by ID."""
-    task = find_task(task_id)
-    if task == None:
-        abort(404)
-    return jsonify({'task found': task})
+    try:
+        task = find_task(task_id)
+        if task is None:
+            abort(404)
+        return jsonify({'task found': task})
+    except Exception as e:
+        log_request_error(500)
+        return make_response(jsonify({'error': 'Internal server error'}), 500)
 
 @app.route('/todos', methods=['POST'])
 def add_task():
     """API route to add a new task."""
-    if not request.json or not 'title' in request.json:
-        abort(400)
-    return jsonify({'newly added task':insert_task(request.json['title'], request.json.get('description', ''))}), 201
+    try:
+        if not request.json or not 'title' in request.json:
+            abort(400)
+        new_task = insert_task(request.json['title'], request.json.get('description', ''))
+        log_task_operation('created')
+        return jsonify({'newly added task': new_task}), 201
+    except Exception as e:
+        log_request_error(500)
+        return make_response(jsonify({'error': 'Internal server error'}), 500)
 
 @app.route('/todos/<int:task_id>', methods=['PUT'])
 def update_task(task_id):
     """API route to update an existing task."""
-    task = find_task(task_id)
-    if task == None:
-        abort(404)
-    if not request.json:
-        abort(400)
-    task['title'] = request.json.get('title', task['title'])
-    task['description'] = request.json.get('description', task['description'])
-    task['is_done'] = int(request.json.get('is_done', int(task['is_done'])))
-    return jsonify({'updated task': change_task(task)})
+    try:
+        task = find_task(task_id)
+        if task is None:
+            abort(404)
+        if not request.json:
+            abort(400)
+        task['title'] = request.json.get('title', task['title'])
+        task['description'] = request.json.get('description', task['description'])
+        task['is_done'] = int(request.json.get('is_done', int(task['is_done'])))
+        updated_task = change_task(task)
+        log_task_operation('updated')
+        return jsonify({'updated task': updated_task})
+    except Exception as e:
+        log_request_error(500)
+        return make_response(jsonify({'error': 'Internal server error'}), 500)
 
 @app.route('/todos/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
     """API route to delete a task."""
-    task = find_task(task_id)
-    if task == None:
-        abort(404)
-    return jsonify({'result':remove_task(task)})
+    try:
+        task = find_task(task_id)
+        if task is None:
+            abort(404)
+        result = remove_task(task)
+        if result:
+            log_task_operation('deleted')
+        else:
+            log_request_error(500)
+        return jsonify({'result': result})
+    except Exception as e:
+        log_request_error(500)
+        return make_response(jsonify({'error': 'Internal server error'}), 500)
 
 @app.errorhandler(404)
 def not_found(error):
     """Error handler for 404 errors."""
+    log_request_error(404)
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 @app.errorhandler(400)
 def bad_request(error):
     """Error handler for 400 errors."""
+    log_request_error(400)
     return make_response(jsonify({'error': 'Bad request'}), 400)
 
-if __name__== '__main__':
+if __name__ == '__main__':
     init_todo_db()
 
     app.run(host='0.0.0.0', port=80)
