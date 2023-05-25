@@ -20,6 +20,8 @@ services:
             - "80:80"
         networks:
             - todo_app_network
+        volumes:
+            - .:/app
         depends_on:
             - database
 
