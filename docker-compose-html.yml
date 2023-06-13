@@ -22,7 +22,8 @@ services:
         restart: always
         container_name: todolist-api
         depends_on:
-            - database
+          database:
+            condition: service_healthy
         ports:
             - "80:80"
         networks:
