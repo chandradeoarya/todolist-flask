@@ -1,4 +1,0 @@
-flask
-flask-mysql
-cryptography
-flask_cors
