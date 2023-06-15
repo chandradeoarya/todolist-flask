@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
@@ -6,6 +6,12 @@ app = Flask(__name__)
 def home():
     """homepage"""
     return "Welcome to to-do API Service"
+
+@app.route('/todos', methods=['GET'])
+def get_tasks():
+    """api route to retrieve all tasks"""
+    return jsonify({ 'tasks': [{'name': 'get milk'}, {'name': 'get bread'}]})
+
 
 
 if __name__ == '__main__':
