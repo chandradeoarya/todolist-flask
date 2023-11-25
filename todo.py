@@ -4,6 +4,10 @@ from flask import Flask, jsonify, abort, request, make_response
 from flaskext.mysql import MySQL
 from flask_cors import CORS
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Set up logging
 # logging.basicConfig(filename='application.log', level=logging.INFO)
 
@@ -33,11 +37,11 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuring MySQL database
-app.config['MYSQL_DATABASE_HOST'] = os.environ.get('MYSQL_DATABASE_HOST')
-app.config['MYSQL_DATABASE_USER'] = os.environ.get('MYSQL_DATABASE_USER')
-app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get('MYSQL_DATABASE_PASSWORD')
-app.config['MYSQL_DATABASE_DB'] = os.environ.get('MYSQL_DATABASE_DB')
-app.config['MYSQL_DATABASE_PORT'] = int(os.environ.get('MYSQL_DATABASE_PORT'))
+app.config['MYSQL_DATABASE_HOST'] = os.getenv('MYSQL_DATABASE_HOST')
+app.config['MYSQL_DATABASE_USER'] = os.getenv('MYSQL_DATABASE_USER')
+app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('MYSQL_DATABASE_PASSWORD')
+app.config['MYSQL_DATABASE_DB'] = "todo_db"
+app.config['MYSQL_DATABASE_PORT'] = int(os.getenv('MYSQL_DATABASE_PORT'))
 mysql = MySQL()
 mysql.init_app(app)
 connection = mysql.connect()

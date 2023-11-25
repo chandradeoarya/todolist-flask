@@ -1,4 +1,5 @@
-flask
+flask==2.3.3
 flask-mysql
 cryptography
 flask_cors
+python-dotenv==1.0.0
