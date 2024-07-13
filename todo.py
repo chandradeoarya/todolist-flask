@@ -40,7 +40,7 @@ CORS(app)
 app.config['MYSQL_DATABASE_HOST'] = os.getenv('MYSQL_DATABASE_HOST')
 app.config['MYSQL_DATABASE_USER'] = os.getenv('MYSQL_DATABASE_USER')
 app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('MYSQL_DATABASE_PASSWORD')
-app.config['MYSQL_DATABASE_DB'] = "todo_db"
+app.config['MYSQL_DATABASE_DB'] = os.getenv('MYSQL_DATABASE')
 app.config['MYSQL_DATABASE_PORT'] = int(os.getenv('MYSQL_DATABASE_PORT'))
 mysql = MySQL()
 mysql.init_app(app)
@@ -51,11 +51,15 @@ cursor = connection.cursor()
 # Function to initialize to-do database
 def init_todo_db():
     """Function to initialize the to-do list database by creating and populating the table."""
+    # Get the database name from the environment variable
+    db_name = os.getenv('MYSQL_DATABASE')
+    
     # Drop table if it exists
-    drop_table = 'DROP TABLE IF EXISTS todo_db.todos;'
+    drop_table = f'DROP TABLE IF EXISTS {db_name}.todos;'
+
     # Create new table
-    todos_table = """
-    CREATE TABLE todo_db.todos(
+    todos_table = f"""
+    CREATE TABLE {db_name}.todos(
     task_id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(100) NOT NULL,
     description VARCHAR(200),
@@ -63,18 +67,19 @@ def init_todo_db():
     PRIMARY KEY (task_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     """
+    
     # Insert data into table
-    data = """
-    INSERT INTO todo_db.todos (title, description, is_done)
+    data = f"""
+    INSERT INTO {db_name}.todos (title, description, is_done)
     VALUES
         ("Learning Linux and AWS", "Finishing all topics", 1 ),
         ("Infra and automation", "Just forgot. Need to revise again.", 0),
         ("CICD", "Learn more", 0);
     """
+    
     cursor.execute(drop_table)
     cursor.execute(todos_table)
     cursor.execute(data)
-
 # Logging helper functions
 def log_request_start():
     logging.info('Request started: %s %s', request.method, request.url)
