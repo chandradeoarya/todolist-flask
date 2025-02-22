@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, abort, request, make_response
+from flask import send_file
 from flaskext.mysql import MySQL
 from flask_cors import CORS
 
@@ -92,8 +93,7 @@ def remove_task(task):
 # Set up Flask routes for API
 @app.route('/')
 def home():
-    """Home route that returns a welcome message."""
-    return "Welcome to to-do API Service"
+    return send_file('index.html')
 
 @app.route('/todos', methods=['GET'])
 def get_tasks():
